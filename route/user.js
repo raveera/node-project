@@ -1,63 +1,53 @@
 const express = require('express')
 const { isEmpty } = require('lodash')
-const connect = require('../database/connectDB')
+const userModel = require('../model/user-model')
 
 const router = express.Router()
 
-// route
-// router.get('/', (req, res) => {
-//   const sql = 'SELECT * FROM user'
-  
-//   connect.query(sql, (err, result) => {
-//     if (err) {
-//       console.log(err.message)
-//     }
-
-//     res.json(result)
-//   })
-// })
-const response = {
-  success: false,
-  data: [],
-  message: ''
-}
-
-router.post('/register', (req, res) => {
+router.post('/register', async (req, res) => {
   const { username, password, name } = req.body
-  const sql = 'INSERT INTO user (username, password, name) VALUES (?, ?, ?)'
+  const response = {
+    success: false,
+    data: [],
+    message: ''
+  }
 
-  connect.query(sql, [username, password, name], (err, result) => {
-    if (err) {
-      console.log(err.message)
-    }
+  const userId = await userModel.getUserId(username)
 
-    response.success = true
-    response.data = { userId: result.insertId}
-    
-    res.json(response)
-  })
+  if (!isEmpty(userId)) {
+    response.message = 'Username alreay exists'
+
+    return res.json(response)
+  }
+
+  const insertUserId = await userModel.create(username, password, name)
+
+  response.success = true
+  response.data = insertUserId
+
+  return res.json(response)
 })
 
-router.post('/login', function (req, res) {
+router.post('/login', async function (req, res) {
   const { username, password } = req.body
-  const sql = 'SELECT user_id, name  FROM user WHERE username = ? AND password = ?'
+  const response = {
+    success: false,
+    data: [],
+    message: ''
+  }
 
-  connect.query(sql, [username, password], (err, list) => {
-    if (err) {
-      console.log(err.message)
-    }
+  const user = await userModel.getUser(username, password)
 
-    if (isEmpty(list)) {
-      response.message = 'username or password is invalid'
+  if (isEmpty(user)) {
+    response.message = 'username or password is invalid'
 
-      return res.json(response)
-    }
+    return res.json(response)
+  }
 
-    response.success = true
-    response.data = list[0]
+  response.success = true
+  response.data = user
 
-    res.json(response)
-  })
+  return res.json(response)
 })
 
 module.exports = router
