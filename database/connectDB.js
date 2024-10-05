@@ -1,5 +1,3 @@
-const express = require('express')
-const cors = require('cors')
 const mysql = require('mysql2')
 
 const connect = mysql.createConnection({
@@ -9,12 +7,6 @@ const connect = mysql.createConnection({
     password: process.env.password
 })
 
-const app = express()
-const port = process.env.PORT || 3000
-
-app.use(cors())
-app.use(express.json())
-
 connect.connect((err) => {
     if (err) {
         console.log('err-> ', err.message)
@@ -23,9 +15,4 @@ connect.connect((err) => {
     console.log('Connected Success!')
 })
 
-app.listen(port, () => console.log('Node.js Port => ', port))
-
-module.exports = {
-    app,
-    connect
-}
+module.exports = connect
