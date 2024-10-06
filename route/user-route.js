@@ -45,7 +45,7 @@ router.post('/login', async function (req, res) {
   }
 
   response.success = true
-  response.data = user
+  response.data = user[0]
 
   return res.json(response)
 })
