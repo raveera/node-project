@@ -25,7 +25,7 @@ async function getUser (username, password) {
           resolve(rows)
         }
     })
-})
+  }) 
 }
 
 async function getUserId (username) {
@@ -36,8 +36,6 @@ async function getUserId (username) {
       if (err) {
         reject(err)
       } else {
-        console.log('result', rows);
-        
         resolve(rows)
       }
     })
