@@ -1,11 +1,11 @@
 const express = require('express')
 const { isEmpty } = require('lodash')
 const recordModel = require('../model/record-model')
+const bandModel = require('../model/band-model')
 
 const router = express.Router()
 
-router.get('/:id', async (req, res) => {
-  const userId = req.params.id
+router.get('/', async (req, res) => {
   const response = {
     success: false,
     data: [],
@@ -13,7 +13,7 @@ router.get('/:id', async (req, res) => {
   }
 
   try {
-    const recordList = await recordModel.getRecordListByUserId(userId)
+    const recordList = await recordModel.getRecordList()
     response.success = true
     response.data = recordList
 
@@ -90,10 +90,11 @@ router.delete('/:id', async (req, res) => {
   }
 
   try {
-    const affectedRows = await recordModel.remove(recordId)
+    const bandAffectedRow = await bandModel.removeBandByRecordId(recordId)
+    const recordAffectedRows = await recordModel.remove(recordId)
 
     response.success = true
-    response.data = { affectedRows }
+    response.data = { bandAffectedRow, recordAffectedRows }
   
     return res.json(response)
   } catch (error) {
