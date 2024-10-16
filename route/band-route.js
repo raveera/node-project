@@ -11,13 +11,15 @@ const defaultResponse = {
   message: ''
 }
 
-router.get('/:recordId', async (req, res) => { 
+router.post('/:recordId', async (req, res) => { 
   const recordId = req.params.recordId
+  const { bandName } = req.body
   const response = Object.assign({}, defaultResponse)
 
   try {
     const recordName = await recordModel.getRecordNameByRecordId(recordId)
-    const bandList = await bandModel.getBandListByRecordId(recordId)
+    const bandList = await bandModel.getBandListByRecordId(recordId, bandName)
+    
     response.success = true
     response.data = {
       recordName: recordName || '',

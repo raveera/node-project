@@ -1,11 +1,15 @@
-const { reject, result } = require('lodash')
 const connect = require('../database/connectDB')
 
-async function getBandListByRecordId (recordId) {
+async function getBandListByRecordId (recordId, bandName = '') {
   return new Promise((resolve, reject) => {
-    const sql = 'SELECT band_id, band_name FROM band WHERE record_id = ?'
+    const sql = `SELECT band_name
+                 FROM band
+                 WHERE record_id = ?
+                  AND band_name LIKE ?`
 
-    return connect.query(sql, [recordId], (err, rowList) => {
+    const tempBandName = `%${bandName}%`
+
+    return connect.query(sql, [recordId, tempBandName], (err, rowList) => {
       if (err) {
         reject(err)
       } else {
