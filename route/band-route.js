@@ -1,6 +1,7 @@
 const express = require('express')
-const bandModel = require('../model/band-model')
 const { isEmpty } = require('lodash')
+const bandModel = require('../model/band-model')
+const recordModel = require('../model/record-model')
 
 const router = express.Router()
 
@@ -15,9 +16,13 @@ router.get('/:recordId', async (req, res) => {
   const response = Object.assign({}, defaultResponse)
 
   try {
+    const recordName = await recordModel.getRecordNameByRecordId(recordId)
     const bandList = await bandModel.getBandListByRecordId(recordId)
     response.success = true
-    response.data = bandList
+    response.data = {
+      recordName: recordName || '',
+      bandList: bandList || []
+    }
 
     return res.json(response)
   } catch (error) {

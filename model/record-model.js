@@ -28,15 +28,15 @@ async function getRecordName (name) {
   })
 }
 
-async function getRecordByRecordId (recordId) {
+async function getRecordNameByRecordId (recordId) {
   return new Promise((resolve, reject) => {
     const sql = 'SELECT name FROM record WHERE record_id = ?'
 
     return connect.query(sql, [recordId], (err, rowList) => {
       if (err) {
         reject(err)
-      } else {
-        resolve(rowList)
+      } else {        
+        resolve(rowList[0]?.name)
       }
     })
   })
@@ -88,7 +88,7 @@ module.exports = {
   create,
   getRecordName,
   getRecordList,
-  getRecordByRecordId,
+  getRecordNameByRecordId,
   update,
   remove
 }
