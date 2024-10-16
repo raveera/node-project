@@ -44,7 +44,14 @@ async function getRecordNameByRecordId (recordId) {
 
 async function getRecordList () {
   return new Promise((resolve, reject) => {
-    const sql = 'SELECT record_id, name FROM record'
+    const sql = `SELECT
+                  r.record_id,
+                  r.name,
+                  COUNT(b.band_id) AS total_band
+                 FROM record AS r
+                 LEFT JOIN band AS b
+                  ON r.record_id = b.record_id
+                 GROUP BY r.record_id`
 
     return connect.query(sql, (err, rowList) => {
       if (err) {
